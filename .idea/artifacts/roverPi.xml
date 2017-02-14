@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="roverPi">
+    <output-path>$PROJECT_DIR$/out/artifacts/roverPi</output-path>
+    <root id="archive" name="roverPi.jar">
+      <element id="module-output" name="rover" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="library" level="project" name="com.pi4j:pi4j-core:1.1" />
+    </root>
+  </artifact>
+</component>
