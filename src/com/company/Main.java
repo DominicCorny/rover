@@ -1,6 +1,10 @@
 package com.company;
 
-import com.pi4j.wiringpi.Gpio;
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPinDigitalOutput;
+import com.pi4j.io.gpio.PinState;
+import com.pi4j.io.gpio.RaspiPin;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -11,7 +15,11 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        Gpio.wiringPiSetupGpio();
+        final GpioController gpio = GpioFactory.getInstance();
+
+        final GpioPinDigitalOutput pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "MyLED", PinState.LOW);
+
+        /*Gpio.wiringPiSetupGpio();
         int pin = 12;
         int pin2 = 35;
         pin = pin2;
@@ -21,7 +29,7 @@ public class Main {
         Gpio.pwmSetClock(192);
         Gpio.pwmSetRange(2000);
 
-        /*Gpio.pinMode(pin2, Gpio.PWM_OUTPUT);
+        Gpio.pinMode(pin2, Gpio.PWM_OUTPUT);
         Gpio.pwmSetMode(Gpio.PWM_MODE_MS);
         Gpio.pwmSetClock(192);
         Gpio.pwmSetRange(2000);*/
@@ -29,7 +37,15 @@ public class Main {
 
         while (true) {
             System.out.print("\n Gib einen Wert ein");
-            Gpio.pwmWrite(pin, scanner.nextInt());
+            int Eingabe = scanner.nextInt();
+            if(Eingabe != 0){
+                pin.pulse(1, true);
+            }else{
+                gpio.shutdown();
+                return;
+            }
+
+            //Gpio.pwmWrite(pin, scanner.nextInt());
             //System.out.print("\n Gib einen zweiten Wert ein");
             //Gpio.pwmWrite(pin2, scanner.nextInt());
 
