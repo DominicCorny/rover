@@ -1,5 +1,4 @@
 package com.company;
-
 import java.io.IOException;
 import java.util.Scanner;
 //import com.pi4j.wiringpi.Gpio;import com.pi4j.wiringpi.SoftPwm;
@@ -10,11 +9,12 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        //Software PWM
-        SoftwareServoControl Servo1 = new SoftwareServoControl(17);
+
+        //Hardware PWM
+        ServoControl Servo1 = new ServoControl(17);
         boolean active = true;
         while (active) {
-            System.out.print("\n Gib einen Wert ein(digital PWM) ((int)0-100)");
+            System.out.print("\n Gib einen Wert ein(Hardware PWM) ((int)0-100)");
             int Eingabe = scanner.nextInt();
             if (Eingabe != 0) {
                 Servo1.SetValue(Eingabe);
