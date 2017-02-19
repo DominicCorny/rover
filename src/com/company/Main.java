@@ -1,13 +1,11 @@
 package com.company;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.PinState;
-import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.wiringpi.Gpio;
+import com.pi4j.wiringpi.SoftPwm;
 
 import java.io.IOException;
 import java.util.Scanner;
+//import com.pi4j.wiringpi.Gpio;import com.pi4j.wiringpi.SoftPwm;
 
 public class Main {
 
@@ -15,46 +13,46 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        final GpioController gpio = GpioFactory.getInstance();
-
-        final GpioPinDigitalOutput pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "MyLED", PinState.LOW);
-
-        /*Gpio.wiringPiSetupGpio();
+        //Hardware PWM
+        Gpio.wiringPiSetupGpio();
         int pin = 12;
-        int pin2 = 35;
-        pin = pin2;
 
         Gpio.pinMode(pin, Gpio.PWM_OUTPUT);
         Gpio.pwmSetMode(Gpio.PWM_MODE_MS);
         Gpio.pwmSetClock(192);
         Gpio.pwmSetRange(2000);
-
-        Gpio.pinMode(pin2, Gpio.PWM_OUTPUT);
-        Gpio.pwmSetMode(Gpio.PWM_MODE_MS);
-        Gpio.pwmSetClock(192);
-        Gpio.pwmSetRange(2000);*/
-
-
-        while (true) {
-            System.out.print("\n Gib einen Wert ein");
-            int Eingabe = scanner.nextInt();
-            if(Eingabe != 0){
-                pin.pulse(1, true);
-            }else{
-                gpio.shutdown();
-                return;
+        boolean active = true;
+        while(active) {
+            System.out.print("Wert Hardware PWM? (int 50-250)");
+            int hilf = scanner.nextInt();
+            if (hilf == 0) {
+                active = false;
+            } else {
+                Gpio.pwmWrite(pin, hilf);
             }
+        }
 
-            //Gpio.pwmWrite(pin, scanner.nextInt());
-            //System.out.print("\n Gib einen zweiten Wert ein");
-            //Gpio.pwmWrite(pin2, scanner.nextInt());
+        //Software PWM
+        int pin2 = 17;
+        SoftPwm.softPwmCreate(pin2,0,200);
+        active = true;
+        while (active) {
+            System.out.print("\n Gib einen Wert ein(digital PWM) ((int)5-25)");
+            int Eingabe = scanner.nextInt();
+            if (Eingabe != 0) {
+                SoftPwm.softPwmWrite(pin2, Eingabe);
+            } else {
+                SoftPwm.softPwmStop(pin2);
+                active = false;
+            }
+        }
 
+            SoftPwm.softPwmStop(pin2);
             try {
                 Thread.sleep(500);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
 
         /*
         Socket socket = new Socket("192.168.2.110", 4572);
