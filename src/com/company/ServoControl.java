@@ -8,16 +8,16 @@ public class ServoControl {
     private int pin;
     private boolean isHardwarePwm = false;
 
+    private static int u = Gpio.wiringPiSetupGpio();
+
     //Pin 18 = GPIO_1(std PWM) ; Pin 17 = GPIO_0; no Pin = HardwarePWM
     public ServoControl(int pin){
-        Gpio.wiringPiSetupGpio();
         this.pin = pin;
         SoftPwm.softPwmCreate(pin,0,200);
     }
     //Hardware PWM
     public ServoControl() {
         isHardwarePwm = true;
-        Gpio.wiringPiSetupGpio();
         pin = 18;
         Gpio.pinMode(pin, Gpio.PWM_OUTPUT);
         Gpio.pwmSetMode(Gpio.PWM_MODE_MS);
@@ -27,14 +27,14 @@ public class ServoControl {
 
     //den zu übermittelnden wert von 0-100 setzen
     public void SetValue(int Value){
-        if(Value <= 100 && Value > 0) {
+        if(Value <= 100 && Value >= 0) {
             this.value = Value;
             if(isHardwarePwm){
                 Gpio.pwmWrite(pin,(value*2)+50);
-                System.out.print("HardwarePWM Signal gesendet:" + value);
+                System.out.println("HardwarePWM Signal gesendet:" + value);
             }else {
                 SoftPwm.softPwmWrite(pin,((value*2)/10)+5);
-                System.out.print("SoftwarePWM Signal gesendet:" + value);
+                System.out.println("SoftwarePWM Signal gesendet:" + value);
             }
         }else {
             System.out.print("\n Parameter Fehler in SSE Klasse");
