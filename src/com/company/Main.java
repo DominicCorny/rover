@@ -1,4 +1,5 @@
 package com.company;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,16 +9,15 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) throws InterruptedException {
 
         Scanner scanner = new Scanner(System.in);
-        ServoControl speedServo= new ServoControl(17);
-        ServoControl steeringServo = new ServoControl();
+        TrackControl mainTrack = new TrackControl(17,22);
 
         while (true) {
             try {
                 System.out.println("Try to connect");
-                Socket socket = new Socket("192.168.2.110", 4587);
+                Socket socket = new Socket("192.168.2.110", 3841);
                 InputStream inputStream = socket.getInputStream();
                 OutputStream outputstream = socket.getOutputStream();
                 byte[] buffer = new byte[2];
@@ -28,8 +28,7 @@ public class Main {
                     if (inputStream.read(buffer) >= 2) {
                         byte speed = buffer[0];
                         byte steering = buffer[1];
-                        speedServo.SetValue(speed);
-                        steeringServo.SetValue(steering);
+                        mainTrack.setTrack(speed,steering);
                         System.out.println("New Speed: " + speed + " steering: " + steering + "\n");
                         outputstream.write("PI OK".getBytes());
                     }

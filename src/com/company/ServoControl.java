@@ -26,7 +26,7 @@ public class ServoControl {
     }
 
     //den zu übermittelnden wert von 0-100 setzen
-    public void SetValue(int Value){
+    public void setValue(int Value){
         if(Value <= 100 && Value >= 0) {
             this.value = Value;
             if(isHardwarePwm){
@@ -40,8 +40,17 @@ public class ServoControl {
             System.out.print("\n Parameter Fehler in SSE Klasse");
         }
     }
+    public void cutSignal() {
+        if(isHardwarePwm){
+            Gpio.pwmWrite(pin,0);
+            System.out.println("HardwarePWM Signal gesendet:" + "No Signal");
+        }else {
+            SoftPwm.softPwmWrite(pin,0);
+            System.out.println("SoftwarePWM Signal gesendet:" + "No Signal");
+        }
+    }
 
-    public int GetValue(){
+    public int getValue(){
         return value;
     }
     public void Close(){
