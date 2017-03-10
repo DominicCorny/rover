@@ -2,7 +2,6 @@ package com.company;
 
 public class Main {
     private static int lnCounter;
-
     public static void main(String[] args) {
      //   ServoControl speedServo = new ServoControl();
      //   ServoControl steeringServo = new ServoControl(17);
