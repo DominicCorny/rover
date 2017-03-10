@@ -17,7 +17,7 @@ public class ConnectionThread extends Thread {
 
         while (true) {
             System.out.println("Try to connect to server");
-            try (Socket socket = new Socket("tv_test.dd-dns.de", 3841)) {
+            try (Socket socket = new Socket("192.168.2.110", 3841)) {
                 socket.setTcpNoDelay(true);
                 socket.setSoTimeout(1000);
                 //test connection
@@ -33,7 +33,7 @@ public class ConnectionThread extends Thread {
                 }
             } catch (Exception e) {
                 System.out.println("Connection lost because of " + e.getMessage());
-                listener.update((byte) 0, (byte) 0);
+                listener.update((byte) 50, (byte) 50);
             }
             sleep(200);
         }
