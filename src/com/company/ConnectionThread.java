@@ -40,6 +40,7 @@ public class ConnectionThread extends Thread {
             } catch (Exception e) {
                 listener.update((byte) 50, (byte) 50);
                 println("Connection lost because of " + e.getMessage() + "\nTry to connect to server");
+                sleep();
             }
         }
     }
@@ -47,6 +48,13 @@ public class ConnectionThread extends Thread {
     private void println(String s) {
         date.setTime(System.currentTimeMillis());
         System.out.println(dateFormat.format(date) + '\t' + s);
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(25);
+        } catch (InterruptedException ignore) {
+        }
     }
 
     interface Listener {
