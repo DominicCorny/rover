@@ -1,49 +1,59 @@
 package com.company;
 
 import java.io.IOException;
-import java.net.Socket;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ConnectionThread extends Thread {
 
     private Listener listener;
+    private DatagramSocket socket;
+    private DatagramPacket packet;
 
-    ConnectionThread(Listener listener) {
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss:SSS");
+    private Date date = new Date();
+
+    ConnectionThread(InetSocketAddress address, Listener listener) {
         this.listener = listener;
+        try {
+            socket = new DatagramSocket();
+            socket.setSoTimeout(1000);
+            packet = new DatagramPacket(new byte[6], 0, 6, address);
+        } catch (IOException e) {
+            println("WTF? Should not have happened.");
+            e.printStackTrace();
+            System.exit(-1);
+        }
     }
 
     @Override
     public void run() {
-        byte[] buffer = new byte[2];
-
+        println("Try to connect to server");
         while (true) {
-            System.out.println("Try to connect to server");
-            try (Socket socket = new Socket("192.168.2.110", 3841)) {
-                socket.setTcpNoDelay(true);
-                socket.setSoTimeout(1000);
-                //test connection
-                if (socket.getInputStream().read() != 1) throw new IOException("read error");
-                socket.getOutputStream().write(1);
-                System.out.println("connected");
-
-                while (true) {
-                    if (socket.getInputStream().read(buffer) < 2) throw new IOException("read error");
-                    listener.update(buffer[0], buffer[1]);
-                    //respond
-                    socket.getOutputStream().write(1);
-                }
+            try {
+                socket.send(packet);
+                socket.receive(packet);
+                listener.update(packet.getData()[0], packet.getData()[1]);
             } catch (Exception e) {
-                System.out.println("Connection lost because of " + e.getMessage());
                 listener.update((byte) 50, (byte) 50);
+                println("Connection lost because of " + e.getMessage() + "\nTry to connect to server");
+                sleep();
             }
-            sleep(200);
         }
     }
 
-    private void sleep(int millis) {
+    private void println(String s) {
+        date.setTime(System.currentTimeMillis());
+        System.out.println(dateFormat.format(date) + '\t' + s);
+    }
+
+    private void sleep() {
         try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.sleep(25);
+        } catch (InterruptedException ignore) {
         }
     }
 
