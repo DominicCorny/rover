@@ -27,7 +27,7 @@ public class ConnectionThread extends Thread {
 
     @Override
     public void run() {
-        println("Try to connect to server");
+        println("Try to connect to app");
         while (true) {
             try {
                 socket.send(packet);
@@ -35,7 +35,7 @@ public class ConnectionThread extends Thread {
                 listener.update(packet.getData()[4], packet.getData()[5]);
             } catch (Exception e) {
                 listener.update((byte) 50, (byte) 50);
-                println("Connection lost because of " + e.getMessage() + "\nTry to connect to server");
+                println("Connection lost because of " + e.getMessage() + "\nTry to connect to app");
                 sleep(25);
             }
         }
