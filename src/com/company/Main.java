@@ -8,9 +8,9 @@ import java.util.Date;
 
 public class Main {
 
-    public static void main(String[] args) throws UnknownHostException {
+    public static void main(String[] args) throws Exception {
         SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
-        InetSocketAddress address = new InetSocketAddress(InetAddress.getByName("127.0.0.1"), 3841);
+        InetSocketAddress address = new InetSocketAddress(InetAddress.getByName("192.168.13.38"), 5004);
 
         //TrackControl mainTrack = new TrackControl(17,22);
 

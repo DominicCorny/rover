@@ -1,9 +1,9 @@
 package com.company;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -16,17 +16,13 @@ public class ConnectionThread extends Thread {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss:SSS");
     private Date date = new Date();
 
-    ConnectionThread(InetSocketAddress address, Listener listener) {
+    ConnectionThread(InetSocketAddress address, Listener listener) throws SocketException {
         this.listener = listener;
-        try {
-            socket = new DatagramSocket();
-            socket.setSoTimeout(1000);
-            packet = new DatagramPacket(new byte[6], 0, 6, address);
-        } catch (IOException e) {
-            println("WTF? Should not have happened.");
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        socket = new DatagramSocket();
+        socket.setSoTimeout(1000);
+
+        byte[] data = new byte[6];
+        packet = new DatagramPacket(data, 0, data.length, address);
     }
 
     @Override
@@ -36,11 +32,11 @@ public class ConnectionThread extends Thread {
             try {
                 socket.send(packet);
                 socket.receive(packet);
-                listener.update(packet.getData()[0], packet.getData()[1]);
+                listener.update(packet.getData()[4], packet.getData()[5]);
             } catch (Exception e) {
                 listener.update((byte) 50, (byte) 50);
                 println("Connection lost because of " + e.getMessage() + "\nTry to connect to server");
-                sleep();
+                sleep(25);
             }
         }
     }
@@ -50,9 +46,9 @@ public class ConnectionThread extends Thread {
         System.out.println(dateFormat.format(date) + '\t' + s);
     }
 
-    private void sleep() {
+    private void sleep(int millis) {
         try {
-            Thread.sleep(25);
+            Thread.sleep(millis);
         } catch (InterruptedException ignore) {
         }
     }
