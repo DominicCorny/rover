@@ -2,7 +2,7 @@ package com.company;
 
 import java.net.*;
 
-import static com.company.Main.println;
+import static com.company.Util.println;
 
 public class ConnectionThread extends Thread {
 
@@ -14,29 +14,28 @@ public class ConnectionThread extends Thread {
         this.listener = listener;
         socket = new DatagramSocket();
         socket.setSoTimeout(1000);
-        packet = new DatagramPacket(new byte[6], 6, new InetSocketAddress("192.168.13.38", 5004));
+        packet = new DatagramPacket(new byte[10], 10, new InetSocketAddress("192.168.13.38", 5004));
     }
 
     @Override
     public void run() {
         println("Try to connect to app");
+        int lastSequenceReceived = -1;
         while (true) {
             try {
                 socket.send(packet);
                 socket.receive(packet);
-                listener.update(packet.getData()[4], packet.getData()[5]);
+
+                int sequenceNr = Util.readInt(packet.getData());
+                if (sequenceNr > lastSequenceReceived) {
+                    lastSequenceReceived = sequenceNr;
+                    listener.update(packet.getData()[8], packet.getData()[9]);
+                }
             } catch (Exception e) {
                 listener.update((byte) 50, (byte) 50);
                 println("Connection lost because of " + e.getMessage() + "\nTry to connect to app");
-                sleep(25);
+                Util.sleep(25);
             }
-        }
-    }
-
-    private void sleep(int millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException ignore) {
         }
     }
 
