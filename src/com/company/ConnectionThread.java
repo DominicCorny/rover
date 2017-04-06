@@ -1,11 +1,8 @@
 package com.company;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.net.SocketException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.net.*;
+
+import static com.company.Main.println;
 
 public class ConnectionThread extends Thread {
 
@@ -13,16 +10,11 @@ public class ConnectionThread extends Thread {
     private DatagramSocket socket;
     private DatagramPacket packet;
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss:SSS");
-    private Date date = new Date();
-
-    ConnectionThread(InetSocketAddress address, Listener listener) throws SocketException {
+    ConnectionThread(Listener listener) throws SocketException, UnknownHostException {
         this.listener = listener;
         socket = new DatagramSocket();
         socket.setSoTimeout(1000);
-
-        byte[] data = new byte[6];
-        packet = new DatagramPacket(data, 0, data.length, address);
+        packet = new DatagramPacket(new byte[6], 6, new InetSocketAddress("192.168.13.38", 5004));
     }
 
     @Override
@@ -39,11 +31,6 @@ public class ConnectionThread extends Thread {
                 sleep(25);
             }
         }
-    }
-
-    private void println(String s) {
-        date.setTime(System.currentTimeMillis());
-        System.out.println(dateFormat.format(date) + '\t' + s);
     }
 
     private void sleep(int millis) {
