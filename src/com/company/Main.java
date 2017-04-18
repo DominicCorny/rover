@@ -1,23 +1,14 @@
 package com.company;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import static com.company.Util.println;
 
 public class Main {
 
-    public static void main(String[] args) throws UnknownHostException {
-        SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
-        InetSocketAddress address = new InetSocketAddress(InetAddress.getByName("127.0.0.1"), 3841);
-
+    public static void main(String[] args) throws Exception {
         //TrackControl mainTrack = new TrackControl(17,22);
-
-        new ConnectionThread(address, (speed, steering) -> {
-            System.out.println("Speed = " + speed + " steering = " + steering + '\t' + time.format(new Date()));
+        new ConnectionThread((speed, steering) -> {
+            println("speed = " + speed + " steering = " + steering);
             //mainTrack.setTrack(speed,steering);
-
         }).start();
     }
 }

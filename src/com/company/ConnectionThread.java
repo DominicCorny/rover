@@ -1,11 +1,8 @@
 package com.company;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.net.*;
+
+import static com.company.Util.println;
 
 public class ConnectionThread extends Thread {
 
@@ -13,47 +10,32 @@ public class ConnectionThread extends Thread {
     private DatagramSocket socket;
     private DatagramPacket packet;
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd HH:mm:ss:SSS");
-    private Date date = new Date();
-
-    ConnectionThread(InetSocketAddress address, Listener listener) {
+    ConnectionThread(Listener listener) throws SocketException, UnknownHostException {
         this.listener = listener;
-        try {
-            socket = new DatagramSocket();
-            socket.setSoTimeout(1000);
-            packet = new DatagramPacket(new byte[6], 0, 6, address);
-        } catch (IOException e) {
-            println("WTF? Should not have happened.");
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        socket = new DatagramSocket();
+        socket.setSoTimeout(1000);
+        packet = new DatagramPacket(new byte[10], 10, new InetSocketAddress("192.168.13.38", 5004));
     }
 
     @Override
     public void run() {
-        println("Try to connect to server");
+        println("Try to connect to app");
+        int lastSequenceReceived = -1;
         while (true) {
             try {
                 socket.send(packet);
                 socket.receive(packet);
-                listener.update(packet.getData()[0], packet.getData()[1]);
+
+                int sequenceNr = Util.readInt(packet.getData());
+                if (sequenceNr > lastSequenceReceived) {
+                    lastSequenceReceived = sequenceNr;
+                    listener.update(packet.getData()[8], packet.getData()[9]);
+                }
             } catch (Exception e) {
                 listener.update((byte) 50, (byte) 50);
-                println("Connection lost because of " + e.getMessage() + "\nTry to connect to server");
-                sleep();
+                println("Connection lost because of " + e.getMessage() + "\nTry to connect to app");
+                Util.sleep(25);
             }
-        }
-    }
-
-    private void println(String s) {
-        date.setTime(System.currentTimeMillis());
-        System.out.println(dateFormat.format(date) + '\t' + s);
-    }
-
-    private void sleep() {
-        try {
-            Thread.sleep(25);
-        } catch (InterruptedException ignore) {
         }
     }
 
