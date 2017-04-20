@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="com.pi4j:pi4j-core:1.1" level="project" />
+    <orderEntry type="library" name="jrpicam-1.1.1" level="project" />
   </component>
 </module>
