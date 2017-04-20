@@ -12,9 +12,9 @@ public class ConnectionThread extends Thread {
 
     ConnectionThread(Listener listener) throws SocketException, UnknownHostException {
         this.listener = listener;
-        socket = new DatagramSocket();
+        socket = new DatagramSocket(53735);
         socket.setSoTimeout(1000);
-        packet = new DatagramPacket(new byte[10], 10, new InetSocketAddress("192.168.13.38", 5004));
+        packet = new DatagramPacket(new byte[10], 10, new InetSocketAddress("192.168.2.101", 53735));
     }
 
     @Override
