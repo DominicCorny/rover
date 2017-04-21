@@ -1,4 +1,3 @@
 Manifest-Version: 1.0
 Main-Class: com.company.Main
-Class-Path: pi4j-core-1.1.jar
-Class-Path: jrpicam-1.1.1.jar
+Class-Path: pi4j-core-1.1.jar jrpicam-1.1.1.jar

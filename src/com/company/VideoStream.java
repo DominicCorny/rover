@@ -3,7 +3,11 @@ package com.company;
 import com.hopding.jrpicam.RPiCamera;
 import com.hopding.jrpicam.exceptions.FailedToRunRaspistillException;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -19,24 +23,20 @@ public class VideoStream {
             System.out.println("fatal problem with PiCamBib");
             e.printStackTrace();
         }
-        /*for(int i=0;i<10;i++){
-            System.out.println("take Pic");
-            piCamera.takeStill("An Awesome Pic.jpg");
-            System.out.println("Pic ready");
-        }*/
-            //piCamera.setTimeout(1);
-        BufferedImage image;
-        piCamera.setFullPreviewOff();
-        piCamera.setShutter(1);
-        piCamera.setQuality(100);
-        piCamera.setTimeout(1);
-        //piCamera.setTimeout(3000);
-        //piCamera.timelapse(true,"image.png",300);
-        piCamera.enableBurst();
-        for(int i=0;i<10;i++) {
+            piCamera.turnOffPreview();
             System.out.println("take Pic buffer");
-            image = piCamera.takeBufferedStill(50,50);
+            BufferedImage image = piCamera.takeBufferedStill();
             System.out.println("Pic ready");
-        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "jpg", baos );
+        baos.flush();
+
+        byte[] imageInByte = baos.toByteArray();
+        baos.close();
+
+        BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageInByte));
+        File outputfile = new File("image456.jpg");
+        ImageIO.write(img,"jpg",outputfile);
     }
 }
