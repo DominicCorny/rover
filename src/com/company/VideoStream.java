@@ -5,10 +5,8 @@ import com.hopding.jrpicam.exceptions.FailedToRunRaspistillException;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.Socket;
 
 /**
  * Created by kernd on 04.04.2017.
@@ -16,7 +14,7 @@ import java.io.IOException;
 public class VideoStream {
     RPiCamera piCamera;
 
-    public VideoStream() throws IOException, InterruptedException {
+    public VideoStream()  throws IOException, InterruptedException {
         try {
             piCamera = new RPiCamera("/home/pi/Pictures");
         } catch (FailedToRunRaspistillException e) {
@@ -24,11 +22,46 @@ public class VideoStream {
             e.printStackTrace();
         }
             piCamera.turnOffPreview();
-            System.out.println("take Pic buffer");
-            BufferedImage image = piCamera.takeBufferedStill();
-            System.out.println("Pic ready");
+    }
+    public void tackePicture() throws IOException, InterruptedException {
+        System.out.println("take Pic buffer");
+        BufferedImage image = piCamera.takeBufferedStill(1920,1080);
+        System.out.println("Pic ready");
 
+        //Path path = file1.toPath();//Paths.get("path/to/file");
+        //byte[] imgBytes = Files.readAllBytes(path);
+        //byte[] imgBytes = ((DataBufferByte) image.getData().getDataBuffer()).getData();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "BMP", baos);
+        baos.flush();
+        byte[] imgBytes = baos.toByteArray();
+        baos.close();
+
+        /*speicher bild auf Pi
+        File file2 = new File("/home/pi/Desktop/file.png");
+        FileOutputStream fos = new FileOutputStream(file2);
+        fos.write(imgBytes);
+        fos.flush();
+        fos.close();*/
+
+        System.out.println("länge bild" + imgBytes.length);
+        //byte[] imgBytes = {4,5,4,5,4};
+        if (imgBytes.length != 0) {
+            Socket socket = new Socket("192.168.2.101", 9788);
+
+            // Using DataOutputStream for simplicity
+            OutputStream out = socket.getOutputStream();
+            DataOutputStream data = new DataOutputStream(out);
+            data.writeInt(imgBytes.length);
+            data.write(imgBytes);
+            data.flush();
+
+        }else {
+            System.out.println("kein bild!!!-----------------kein bild");
+        }
+    }
+}
+/*ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "jpg", baos );
         baos.flush();
 
@@ -37,6 +70,4 @@ public class VideoStream {
 
         BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageInByte));
         File outputfile = new File("image456.jpg");
-        ImageIO.write(img,"jpg",outputfile);
-    }
-}
+        ImageIO.write(img,"jpg",outputfile);*/
