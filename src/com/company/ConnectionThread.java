@@ -32,7 +32,7 @@ public class ConnectionThread extends Thread {
                     listener.update(packet.getData()[8], packet.getData()[9],packet.getData()[10]);
                 }
             } catch (Exception e) {
-                listener.update((byte) 50, (byte) 50,(byte) 0);
+                //listener.update((byte) 50, (byte) 50,(byte) 0);
                 println("Connection lost because of " + e.getMessage() + "\nTry to connect to app");
                 Util.sleep(25);
             }

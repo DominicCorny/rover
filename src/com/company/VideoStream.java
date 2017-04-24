@@ -11,7 +11,7 @@ import java.net.Socket;
 /**
  * Created by kernd on 04.04.2017.
  */
-public class VideoStream {
+public class VideoStream extends Thread{
     RPiCamera piCamera;
 
     public VideoStream()  throws IOException, InterruptedException {
@@ -23,11 +23,13 @@ public class VideoStream {
         }
             piCamera.turnOffPreview();
     }
-    public void tackePicture() throws IOException, InterruptedException {
-        System.out.println("take Pic buffer");
-        BufferedImage image = piCamera.takeBufferedStill(1920,1080);
-        System.out.println("Pic ready");
+    public void run(){
+        System.out.println("foto Thread started");
+        BufferedImage image = null;
+        try {
+            image = piCamera.takeBufferedStill(1920,1080);
 
+        System.out.println("Pic ready");
         //Path path = file1.toPath();//Paths.get("path/to/file");
         //byte[] imgBytes = Files.readAllBytes(path);
         //byte[] imgBytes = ((DataBufferByte) image.getData().getDataBuffer()).getData();
@@ -48,17 +50,24 @@ public class VideoStream {
         //byte[] imgBytes = {4,5,4,5,4};
         if (imgBytes.length != 0) {
             Socket socket = new Socket("192.168.2.101", 9788);
-
             // Using DataOutputStream for simplicity
             OutputStream out = socket.getOutputStream();
             DataOutputStream data = new DataOutputStream(out);
             data.writeInt(imgBytes.length);
             data.write(imgBytes);
             data.flush();
+            data.close();
+            out.close();
 
         }else {
             System.out.println("kein bild!!!-----------------kein bild");
         }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("fotothread stopped");
     }
 }
 /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
