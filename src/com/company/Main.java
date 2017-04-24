@@ -7,12 +7,12 @@ import static com.company.Util.println;
 public class Main {
     static byte fotoalt = 0;
     public static void main(String[] args) throws Exception {
-        //TrackControl mainTrack = new TrackControl(17,22);
+        TrackControl mainTrack = new TrackControl(17,23);
         //ServoControl Motor1 = new ServoControl(17);
         //for(int i=0;i<10;i++)
         new ConnectionThread((speed, steering, foto) -> {
             println("speed = " + speed + " steering = " + steering + "foto:" + foto);
-            //mainTrack.setTrack(speed,steering);
+            mainTrack.setTrack(speed,steering);
             //Motor1.setValue(speed);
             if(foto > fotoalt) {
                 fotoalt++;
