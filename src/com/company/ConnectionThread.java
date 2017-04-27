@@ -14,7 +14,7 @@ public class ConnectionThread extends Thread {
         this.listener = listener;
         socket = new DatagramSocket(8765);
         socket.setSoTimeout(1000);
-        packet = new DatagramPacket(new byte[11], 11, new InetSocketAddress("192.168.2.101", 8765));
+        packet = new DatagramPacket(new byte[11], 11, new InetSocketAddress("192.168.43.001", 8765));
     }
 
     @Override

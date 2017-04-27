@@ -49,7 +49,7 @@ public class VideoStream extends Thread{
         System.out.println("länge bild" + imgBytes.length);
         //byte[] imgBytes = {4,5,4,5,4};
         if (imgBytes.length != 0) {
-            Socket socket = new Socket("192.168.2.101", 9788);
+            Socket socket = new Socket("192.168.43.001", 9788);
             // Using DataOutputStream for simplicity
             OutputStream out = socket.getOutputStream();
             DataOutputStream data = new DataOutputStream(out);
